@@ -17,7 +17,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Arquivos estaticos
+// ============================================
+// Arquivos estaticos - DEVEM VIR PRIMEIRO
+// ============================================
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
@@ -34,27 +36,21 @@ app.get('/api/config', (req, res) => {
     });
 });
 
+// Health check
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', service: 'barberx-app' });
+});
+
 // ============================================
 // Page Routes
 // ============================================
 
-// Rota principal - Redireciona para lista de barbearias ou app
+// Rota principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// App Cliente - Agendamento por slug da barbearia
-// Ex: /barbearia-teste
-app.get('/:slug', (req, res) => {
-    // Ignora rotas conhecidas
-    const knownRoutes = ['admin', 'api', 'css', 'js', 'assets', 'favicon.ico'];
-    if (knownRoutes.includes(req.params.slug)) {
-        return res.status(404).send('Not found');
-    }
-    res.sendFile(path.join(__dirname, 'app', 'index.html'));
-});
-
-// Admin - Painel da Barbearia
+// Admin - Painel da Barbearia (DEVE VIR ANTES de /:slug)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
@@ -63,9 +59,10 @@ app.get('/admin/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
 
-// Health check
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', service: 'barberx-app' });
+// App Cliente - Agendamento por slug da barbearia (CATCH-ALL - DEVE SER A ULTIMA)
+// Ex: /barbearia-teste
+app.get('/:slug', (req, res) => {
+    res.sendFile(path.join(__dirname, 'app', 'index.html'));
 });
 
 // Iniciar servidor
