@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARBERX - Sistema de Agendamentos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .logo {
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d4a853 0%, #b8923f 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .logo-icon svg {
+            color: #0a0a0a;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #d4a853;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4a853 0%, #b8923f 100%);
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 168, 83, 0.3);
+        }
+
+        .btn-secondary {
+            background: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #333333;
+        }
+
+        .btn-secondary:hover {
+            border-color: #d4a853;
+            color: #d4a853;
+        }
+
+        .demo-link {
+            margin-top: 32px;
+            font-size: 0.875rem;
+            color: #666666;
+        }
+
+        .demo-link a {
+            color: #d4a853;
+            text-decoration: none;
+        }
+
+        .demo-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 60px;
+            font-size: 0.75rem;
+            color: #666666;
+        }
+
+        .footer a {
+            color: #d4a853;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5.5 8.5 9 12l-3.5 3.5L2 12l3.5-3.5Z"/>
+                    <path d="m12 2 3.5 3.5L12 9 8.5 5.5 12 2Z"/>
+                    <path d="M18.5 8.5 22 12l-3.5 3.5L15 12l3.5-3.5Z"/>
+                    <path d="m12 15 3.5 3.5L12 22l-3.5-3.5L12 15Z"/>
+                </svg>
+            </div>
+            <div class="logo-text">BARBERX</div>
+        </div>
+
+        <h1>Sistema de Agendamentos para Barbearias</h1>
+        <p>
+            Agende seu horario de forma rapida e facil.
+            Escolha o servico, profissional e horario que melhor se encaixa na sua agenda.
+        </p>
+
+        <div class="buttons">
+            <a href="/admin" class="btn btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Painel Administrativo
+            </a>
+            <a href="/barbearia-teste" class="btn btn-secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 2v4"/>
+                    <path d="M16 2v4"/>
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <path d="M3 10h18"/>
+                </svg>
+                Ver Demo - Agendar Horario
+            </a>
+        </div>
+
+        <div class="demo-link">
+            <p>Quer ter esse sistema na sua barbearia?</p>
+            <a href="https://barber.xrtec1.com">Conheca o BarberX</a>
+        </div>
+
+        <div class="footer">
+            <p>Powered by <a href="https://barber.xrtec1.com">BARBERX</a></p>
+        </div>
+    </div>
+</body>
+</html>

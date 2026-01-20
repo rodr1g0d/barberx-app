@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARBERX - Painel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5.5 8.5 9 12l-3.5 3.5L2 12l3.5-3.5Z"/>
+                        <path d="m12 2 3.5 3.5L12 9 8.5 5.5 12 2Z"/>
+                        <path d="M18.5 8.5 22 12l-3.5 3.5L15 12l3.5-3.5Z"/>
+                        <path d="m12 15 3.5 3.5L12 22l-3.5-3.5L12 15Z"/>
+                    </svg>
+                </span>
+                <span class="logo-text">BARBERX</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="7" height="9" x="3" y="3" rx="1"/>
+                    <rect width="7" height="5" x="14" y="3" rx="1"/>
+                    <rect width="7" height="9" x="14" y="12" rx="1"/>
+                    <rect width="7" height="5" x="3" y="16" rx="1"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="agenda">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 2v4"/>
+                    <path d="M16 2v4"/>
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <path d="M3 10h18"/>
+                </svg>
+                <span>Agenda</span>
+            </a>
+            <a href="#" class="nav-item" data-page="clientes">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Clientes</span>
+            </a>
+            <a href="#" class="nav-item" data-page="servicos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="6" cy="6" r="3"/>
+                    <path d="M8.12 8.12 12 12"/>
+                    <path d="M20 4 8.12 15.88"/>
+                    <circle cx="6" cy="18" r="3"/>
+                    <path d="M14.8 14.8 20 20"/>
+                </svg>
+                <span>Servicos</span>
+            </a>
+            <a href="#" class="nav-item" data-page="profissionais">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 19a6 6 0 0 0-12 0"/>
+                    <circle cx="8" cy="9" r="4"/>
+                    <path d="M22 19a6 6 0 0 0-6-6 4 4 0 1 0 0-8"/>
+                </svg>
+                <span>Profissionais</span>
+            </a>
+            <a href="#" class="nav-item" data-page="financeiro">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" x2="12" y1="2" y2="22"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>Financeiro</span>
+            </a>
+            <a href="#" class="nav-item" data-page="relatorios">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3v18h18"/>
+                    <path d="m19 9-5 5-4-4-3 3"/>
+                </svg>
+                <span>Relatorios</span>
+            </a>
+            <a href="#" class="nav-item" data-page="configuracoes">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span>Configuracoes</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=d4a853&color=0a0a0a&bold=true" alt="Admin">
+                </div>
+                <div class="user-details">
+                    <span class="user-name">Barbearia Teste</span>
+                    <span class="user-role">Administrador</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" x2="9" y1="12" y2="12"/>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" x2="20" y1="12" y2="12"/>
+                        <line x1="4" x2="20" y1="6" y2="6"/>
+                        <line x1="4" x2="20" y1="18" y2="18"/>
+                    </svg>
+                </button>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-date">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 2v4"/>
+                        <path d="M16 2v4"/>
+                        <rect width="18" height="18" x="3" y="4" rx="2"/>
+                        <path d="M3 10h18"/>
+                    </svg>
+                    <span id="currentDate"></span>
+                </div>
+                <button class="notification-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Dashboard Page -->
+            <section class="page active" id="page-dashboard">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                <path d="M3 10h18"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statAgendamentosHoje">0</span>
+                            <span class="stat-label">Agendamentos Hoje</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" x2="12" y1="2" y2="22"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statFaturamentoHoje">R$ 0</span>
+                            <span class="stat-label">Faturamento Hoje</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statClientesMes">0</span>
+                            <span class="stat-label">Clientes no Mes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon gold">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statAvaliacao">0.0</span>
+                            <span class="stat-label">Avaliacao Media</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Proximos Agendamentos -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Proximos Agendamentos</h3>
+                            <a href="#" class="card-link" data-page="agenda">Ver todos</a>
+                        </div>
+                        <div class="appointments-list" id="proximosAgendamentos">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Grafico de Faturamento -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Faturamento Semanal</h3>
+                            <select class="period-select" id="chartPeriod">
+                                <option value="week">Esta Semana</option>
+                                <option value="month">Este Mes</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Servicos Populares -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Servicos Populares</h3>
+                        </div>
+                        <div class="popular-services" id="servicosPopulares">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Profissionais do Dia -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Profissionais Hoje</h3>
+                        </div>
+                        <div class="professionals-today" id="profissionaisHoje">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agenda Page -->
+            <section class="page" id="page-agenda">
+                <div class="agenda-header">
+                    <div class="agenda-nav">
+                        <button class="btn-icon" id="prevWeek">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m15 18-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <span class="agenda-period" id="agendaPeriod">Janeiro 2026</span>
+                        <button class="btn-icon" id="nextWeek">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="agenda-actions">
+                        <select class="filter-select" id="filterProfissional">
+                            <option value="">Todos Profissionais</option>
+                        </select>
+                        <button class="btn-primary" id="novoAgendamentoBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14"/>
+                                <path d="M12 5v14"/>
+                            </svg>
+                            Novo Agendamento
+                        </button>
+                    </div>
+                </div>
+
+                <div class="agenda-calendar">
+                    <div class="calendar-header" id="calendarHeader">
+                        <!-- Days of week -->
+                    </div>
+                    <div class="calendar-body">
+                        <div class="time-column" id="timeColumn">
+                            <!-- Time slots -->
+                        </div>
+                        <div class="days-grid" id="daysGrid">
+                            <!-- Appointments grid -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clientes Page -->
+            <section class="page" id="page-clientes">
+                <div class="page-header">
+                    <div class="search-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.3-4.3"/>
+                        </svg>
+                        <input type="text" placeholder="Buscar cliente..." id="searchCliente">
+                    </div>
+                    <button class="btn-primary" id="novoClienteBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14"/>
+                            <path d="M12 5v14"/>
+                        </svg>
+                        Novo Cliente
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Telefone</th>
+                                <th>Email</th>
+                                <th>Agendamentos</th>
+                                <th>Ultimo Atendimento</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Servicos Page -->
+            <section class="page" id="page-servicos">
+                <div class="page-header">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="ativos">Ativos</button>
+                        <button class="tab" data-tab="inativos">Inativos</button>
+                    </div>
+                    <button class="btn-primary" id="novoServicoBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14"/>
+                            <path d="M12 5v14"/>
+                        </svg>
+                        Novo Servico
+                    </button>
+                </div>
+
+                <div class="services-grid" id="servicosGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Profissionais Page -->
+            <section class="page" id="page-profissionais">
+                <div class="page-header">
+                    <h2>Equipe</h2>
+                    <button class="btn-primary" id="novoProfissionalBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14"/>
+                            <path d="M12 5v14"/>
+                        </svg>
+                        Novo Profissional
+                    </button>
+                </div>
+
+                <div class="professionals-grid" id="profissionaisGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Financeiro Page -->
+            <section class="page" id="page-financeiro">
+                <div class="finance-stats">
+                    <div class="finance-card">
+                        <span class="finance-label">Faturamento do Mes</span>
+                        <span class="finance-value green" id="faturamentoMes">R$ 0,00</span>
+                    </div>
+                    <div class="finance-card">
+                        <span class="finance-label">Ticket Medio</span>
+                        <span class="finance-value" id="ticketMedio">R$ 0,00</span>
+                    </div>
+                    <div class="finance-card">
+                        <span class="finance-label">Total de Atendimentos</span>
+                        <span class="finance-value" id="totalAtendimentos">0</span>
+                    </div>
+                    <div class="finance-card">
+                        <span class="finance-label">Comissoes a Pagar</span>
+                        <span class="finance-value orange" id="comissoesPagar">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card full-width">
+                        <div class="card-header">
+                            <h3>Movimentacoes</h3>
+                            <div class="filter-group">
+                                <input type="date" id="filterDataInicio">
+                                <input type="date" id="filterDataFim">
+                                <button class="btn-secondary" id="filtrarMovimentacoes">Filtrar</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Cliente</th>
+                                        <th>Servico</th>
+                                        <th>Profissional</th>
+                                        <th>Pagamento</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="movimentacoesTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Relatorios Page -->
+            <section class="page" id="page-relatorios">
+                <div class="reports-grid">
+                    <div class="report-card" data-report="faturamento">
+                        <div class="report-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" x2="12" y1="2" y2="22"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <h3>Relatorio de Faturamento</h3>
+                        <p>Analise detalhada de receitas por periodo</p>
+                    </div>
+                    <div class="report-card" data-report="servicos">
+                        <div class="report-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="6" cy="6" r="3"/>
+                                <path d="M8.12 8.12 12 12"/>
+                                <path d="M20 4 8.12 15.88"/>
+                                <circle cx="6" cy="18" r="3"/>
+                                <path d="M14.8 14.8 20 20"/>
+                            </svg>
+                        </div>
+                        <h3>Servicos Realizados</h3>
+                        <p>Ranking e estatisticas de servicos</p>
+                    </div>
+                    <div class="report-card" data-report="profissionais">
+                        <div class="report-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 19a6 6 0 0 0-12 0"/>
+                                <circle cx="8" cy="9" r="4"/>
+                                <path d="M22 19a6 6 0 0 0-6-6 4 4 0 1 0 0-8"/>
+                            </svg>
+                        </div>
+                        <h3>Desempenho Profissionais</h3>
+                        <p>Produtividade e comissoes da equipe</p>
+                    </div>
+                    <div class="report-card" data-report="clientes">
+                        <div class="report-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h3>Analise de Clientes</h3>
+                        <p>Frequencia e preferencias dos clientes</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuracoes Page -->
+            <section class="page" id="page-configuracoes">
+                <div class="settings-container">
+                    <div class="settings-sidebar">
+                        <button class="settings-tab active" data-settings="geral">Dados da Barbearia</button>
+                        <button class="settings-tab" data-settings="horarios">Horarios</button>
+                        <button class="settings-tab" data-settings="pagamentos">Pagamentos</button>
+                        <button class="settings-tab" data-settings="notificacoes">Notificacoes</button>
+                    </div>
+                    <div class="settings-content">
+                        <!-- Dados Gerais -->
+                        <div class="settings-panel active" id="settings-geral">
+                            <h3>Dados da Barbearia</h3>
+                            <form class="settings-form" id="formDadosBarbearia">
+                                <div class="form-group">
+                                    <label>Nome da Barbearia</label>
+                                    <input type="text" id="configNome" value="Barbearia Teste">
+                                </div>
+                                <div class="form-group">
+                                    <label>Descricao</label>
+                                    <textarea id="configDescricao" rows="3">A melhor barbearia da cidade!</textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Telefone</label>
+                                        <input type="tel" id="configTelefone" value="(11) 99999-9999">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="configEmail" value="contato@barbearia.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Endereco</label>
+                                    <input type="text" id="configEndereco" value="Rua das Flores, 123">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Cidade</label>
+                                        <input type="text" id="configCidade" value="Sao Paulo">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Estado</label>
+                                        <select id="configEstado">
+                                            <option value="SP" selected>SP</option>
+                                            <option value="RJ">RJ</option>
+                                            <option value="MG">MG</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>CEP</label>
+                                        <input type="text" id="configCep" value="01234-567">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Logo</label>
+                                    <div class="logo-upload">
+                                        <img src="https://ui-avatars.com/api/?name=BT&background=d4a853&color=0a0a0a&size=100&bold=true" alt="Logo" id="logoPreview">
+                                        <button type="button" class="btn-secondary">Alterar Logo</button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary">Salvar Alteracoes</button>
+                            </form>
+                        </div>
+
+                        <!-- Horarios -->
+                        <div class="settings-panel" id="settings-horarios">
+                            <h3>Horarios de Funcionamento</h3>
+                            <form class="settings-form" id="formHorarios">
+                                <div class="schedule-grid">
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Segunda
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="20:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Terca
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="20:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Quarta
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="20:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Quinta
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="20:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Sexta
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="20:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox" checked> Sabado
+                                        </label>
+                                        <input type="time" value="08:00">
+                                        <span>ate</span>
+                                        <input type="time" value="18:00">
+                                    </div>
+                                    <div class="schedule-row">
+                                        <label class="day-checkbox">
+                                            <input type="checkbox"> Domingo
+                                        </label>
+                                        <input type="time" value="08:00" disabled>
+                                        <span>ate</span>
+                                        <input type="time" value="18:00" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Intervalo entre agendamentos (minutos)</label>
+                                    <select id="configIntervalo">
+                                        <option value="15">15 minutos</option>
+                                        <option value="30" selected>30 minutos</option>
+                                        <option value="45">45 minutos</option>
+                                        <option value="60">60 minutos</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-primary">Salvar Horarios</button>
+                            </form>
+                        </div>
+
+                        <!-- Pagamentos -->
+                        <div class="settings-panel" id="settings-pagamentos">
+                            <h3>Configuracoes de Pagamento</h3>
+                            <form class="settings-form" id="formPagamentos">
+                                <div class="form-group">
+                                    <label>Chave PIX</label>
+                                    <input type="text" id="configChavePix" placeholder="CPF, CNPJ, Email ou Telefone">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo da Chave</label>
+                                    <select id="configTipoChave">
+                                        <option value="cpf">CPF</option>
+                                        <option value="cnpj">CNPJ</option>
+                                        <option value="email">Email</option>
+                                        <option value="telefone">Telefone</option>
+                                        <option value="aleatoria">Chave Aleatoria</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Formas de Pagamento Aceitas</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" checked> PIX</label>
+                                        <label><input type="checkbox" checked> Dinheiro</label>
+                                        <label><input type="checkbox" checked> Cartao de Credito</label>
+                                        <label><input type="checkbox" checked> Cartao de Debito</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary">Salvar Configuracoes</button>
+                            </form>
+                        </div>
+
+                        <!-- Notificacoes -->
+                        <div class="settings-panel" id="settings-notificacoes">
+                            <h3>Configuracoes de Notificacoes</h3>
+                            <form class="settings-form" id="formNotificacoes">
+                                <div class="form-group">
+                                    <label class="switch-label">
+                                        <span>Enviar confirmacao de agendamento</span>
+                                        <input type="checkbox" class="switch" checked>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switch-label">
+                                        <span>Enviar lembrete 24h antes</span>
+                                        <input type="checkbox" class="switch" checked>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switch-label">
+                                        <span>Enviar lembrete 1h antes</span>
+                                        <input type="checkbox" class="switch">
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switch-label">
+                                        <span>Notificar cancelamentos</span>
+                                        <input type="checkbox" class="switch" checked>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="switch-label">
+                                        <span>Solicitar avaliacao apos atendimento</span>
+                                        <input type="checkbox" class="switch" checked>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn-primary">Salvar Configuracoes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Modal Novo Agendamento -->
+    <div class="modal" id="modalAgendamento">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Agendamento</h3>
+                <button class="modal-close" data-close="modalAgendamento">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgendamento">
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" id="agendamentoCliente" placeholder="Nome do cliente" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="tel" id="agendamentoTelefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="agendamentoEmail" placeholder="email@exemplo.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Servico</label>
+                        <select id="agendamentoServico" required>
+                            <option value="">Selecione um servico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Profissional</label>
+                        <select id="agendamentoProfissional" required>
+                            <option value="">Selecione um profissional</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data</label>
+                            <input type="date" id="agendamentoData" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Horario</label>
+                            <select id="agendamentoHorario" required>
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observacoes</label>
+                        <textarea id="agendamentoObs" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalAgendamento">Cancelar</button>
+                <button type="submit" form="formAgendamento" class="btn-primary">Criar Agendamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Servico -->
+    <div class="modal" id="modalServico">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Servico</h3>
+                <button class="modal-close" data-close="modalServico">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formServico">
+                    <div class="form-group">
+                        <label>Nome do Servico</label>
+                        <input type="text" id="servicoNome" placeholder="Ex: Corte Masculino" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preco (R$)</label>
+                            <input type="number" id="servicoPreco" step="0.01" placeholder="45.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duracao (minutos)</label>
+                            <input type="number" id="servicoDuracao" placeholder="30" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="servicoCategoria">
+                            <option value="corte">Corte</option>
+                            <option value="barba">Barba</option>
+                            <option value="combo">Combo</option>
+                            <option value="coloracao">Coloracao</option>
+                            <option value="tratamento">Tratamento</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descricao</label>
+                        <textarea id="servicoDescricao" rows="2" placeholder="Descreva o servico..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalServico">Cancelar</button>
+                <button type="submit" form="formServico" class="btn-primary">Salvar Servico</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Profissional -->
+    <div class="modal" id="modalProfissional">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Profissional</h3>
+                <button class="modal-close" data-close="modalProfissional">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formProfissional">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" id="profissionalNome" placeholder="Nome completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Apelido</label>
+                            <input type="text" id="profissionalApelido" placeholder="Como sera chamado">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="tel" id="profissionalTelefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="profissionalEmail" placeholder="email@exemplo.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Comissao (%)</label>
+                        <input type="number" id="profissionalComissao" value="50" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Servicos que realiza</label>
+                        <div class="checkbox-group" id="profissionalServicos">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor na Agenda</label>
+                        <input type="color" id="profissionalCor" value="#d4a853">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalProfissional">Cancelar</button>
+                <button type="submit" form="formProfissional" class="btn-primary">Salvar Profissional</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

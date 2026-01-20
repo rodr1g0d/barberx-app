@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>BarberX | Agendar Horario</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <a href="https://barber.xrtec1.com" class="header-logo">
+                <i data-lucide="scissors"></i>
+                <span>BARBER<span class="gold">X</span></span>
+            </a>
+            <button class="header-menu" id="menuBtn">
+                <i data-lucide="menu"></i>
+            </button>
+        </header>
+
+        <!-- Barbearia Info -->
+        <section class="barbearia-info" id="barbeariaInfo">
+            <div class="barbearia-header">
+                <div class="barbearia-avatar" id="barbeariaAvatar">BT</div>
+                <div class="barbearia-details">
+                    <h1 id="barbeariaNome">Carregando...</h1>
+                    <p class="barbearia-endereco">
+                        <i data-lucide="map-pin"></i>
+                        <span id="barbeariaEndereco">-</span>
+                    </p>
+                </div>
+            </div>
+            <div class="barbearia-actions">
+                <a href="#" class="action-btn" id="btnRota">
+                    <i data-lucide="navigation"></i>
+                    <span>Como chegar</span>
+                </a>
+                <a href="tel:" class="action-btn" id="btnLigar">
+                    <i data-lucide="phone"></i>
+                    <span>Ligar</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Steps Indicator -->
+        <div class="steps-indicator">
+            <div class="step-item active" data-step="1">
+                <div class="step-number">1</div>
+                <span>Servico</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" data-step="2">
+                <div class="step-number">2</div>
+                <span>Profissional</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" data-step="3">
+                <div class="step-number">3</div>
+                <span>Data/Hora</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" data-step="4">
+                <div class="step-number">4</div>
+                <span>Confirmar</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Servicos -->
+        <section class="step-content active" id="step1">
+            <h2 class="step-title">Escolha o servico</h2>
+            <div class="servicos-grid" id="servicosGrid">
+                <!-- Servicos serao carregados via JS do Supabase -->
+                <div class="loading-placeholder">
+                    <div class="loading-spinner small"></div>
+                    <p>Carregando servicos...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Profissionais -->
+        <section class="step-content" id="step2">
+            <h2 class="step-title">Escolha o profissional</h2>
+            <div class="profissionais-grid" id="profissionaisGrid">
+                <!-- Profissionais serao carregados via JS do Supabase -->
+            </div>
+        </section>
+
+        <!-- Step 3: Data e Hora -->
+        <section class="step-content" id="step3">
+            <h2 class="step-title">Escolha a data e hora</h2>
+
+            <!-- Calendario -->
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="calendar-nav" id="prevMonth">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                    <h3 id="currentMonth">Janeiro 2026</h3>
+                    <button class="calendar-nav" id="nextMonth">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Dom</span>
+                    <span>Seg</span>
+                    <span>Ter</span>
+                    <span>Qua</span>
+                    <span>Qui</span>
+                    <span>Sex</span>
+                    <span>Sab</span>
+                </div>
+                <div class="calendar-days" id="calendarDays">
+                    <!-- Dias serao gerados via JS -->
+                </div>
+            </div>
+
+            <!-- Horarios -->
+            <div class="horarios-container" id="horariosContainer" style="display: none;">
+                <h3 class="horarios-title">Horarios disponiveis</h3>
+                <div class="horarios-grid" id="horariosGrid">
+                    <!-- Horarios serao carregados via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: Confirmacao -->
+        <section class="step-content" id="step4">
+            <h2 class="step-title">Confirme seu agendamento</h2>
+
+            <div class="resumo-card">
+                <div class="resumo-item">
+                    <i data-lucide="scissors"></i>
+                    <div>
+                        <span class="resumo-label">Servico</span>
+                        <span class="resumo-value" id="resumoServico">-</span>
+                    </div>
+                </div>
+                <div class="resumo-item">
+                    <i data-lucide="user"></i>
+                    <div>
+                        <span class="resumo-label">Profissional</span>
+                        <span class="resumo-value" id="resumoProfissional">-</span>
+                    </div>
+                </div>
+                <div class="resumo-item">
+                    <i data-lucide="calendar"></i>
+                    <div>
+                        <span class="resumo-label">Data</span>
+                        <span class="resumo-value" id="resumoData">-</span>
+                    </div>
+                </div>
+                <div class="resumo-item">
+                    <i data-lucide="clock"></i>
+                    <div>
+                        <span class="resumo-label">Horario</span>
+                        <span class="resumo-value" id="resumoHorario">-</span>
+                    </div>
+                </div>
+                <div class="resumo-total">
+                    <span>Total</span>
+                    <span class="resumo-preco" id="resumoPreco">R$ 0</span>
+                </div>
+            </div>
+
+            <!-- Dados do Cliente -->
+            <div class="cliente-form">
+                <h3>Seus dados</h3>
+                <div class="form-group">
+                    <label for="clienteNome">Nome completo</label>
+                    <input type="text" id="clienteNome" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="clienteTelefone">WhatsApp</label>
+                    <input type="tel" id="clienteTelefone" placeholder="(11) 99999-9999" required>
+                </div>
+                <div class="form-group">
+                    <label for="clienteEmail">Email (opcional)</label>
+                    <input type="email" id="clienteEmail" placeholder="seu@email.com">
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="btnVoltar" style="display: none;">
+                <i data-lucide="arrow-left"></i>
+                <span>Voltar</span>
+            </button>
+            <button class="btn btn-primary" id="btnAvancar">
+                <span>Continuar</span>
+                <i data-lucide="arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal-overlay" id="modalSucesso">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i data-lucide="check-circle"></i>
+            </div>
+            <h2>Agendamento Confirmado!</h2>
+            <p>Seu horario foi reservado com sucesso.</p>
+
+            <div class="modal-details">
+                <div class="modal-detail-item">
+                    <i data-lucide="calendar"></i>
+                    <span id="modalData">-</span>
+                </div>
+                <div class="modal-detail-item">
+                    <i data-lucide="clock"></i>
+                    <span id="modalHora">-</span>
+                </div>
+                <div class="modal-detail-item">
+                    <i data-lucide="user"></i>
+                    <span id="modalProfissional">-</span>
+                </div>
+            </div>
+
+            <p class="modal-note">
+                <i data-lucide="bell"></i>
+                Voce recebera um lembrete por email 24h antes.
+            </p>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnNovoAgendamento">
+                    Fazer outro agendamento
+                </button>
+                <a href="https://barber.xrtec1.com" class="btn btn-secondary">
+                    Voltar ao inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Processando...</p>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+
+    <!-- App JS -->
+    <script src="/js/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
