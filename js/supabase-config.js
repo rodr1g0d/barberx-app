@@ -3,13 +3,13 @@
 // Credenciais carregadas do servidor via /api/config
 // ============================================
 
-// Supabase client - inicializado dinamicamente
-let supabase = null;
-let supabaseReady = false;
+// Supabase client - inicializado dinamicamente (nome diferente para evitar conflito com CDN)
+let _supabaseClient = null;
+let _supabaseReady = false;
 
 // Inicializar Supabase carregando credenciais do servidor
 async function initSupabase() {
-    if (supabase && supabaseReady) return supabase;
+    if (_supabaseClient && _supabaseReady) return _supabaseClient;
 
     try {
         // Buscar credenciais do servidor (que le do .env)
@@ -21,27 +21,30 @@ async function initSupabase() {
             return null;
         }
 
-        if (window.supabase) {
-            supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
-            supabaseReady = true;
+        // window.supabase vem do CDN @supabase/supabase-js
+        if (window.supabase && window.supabase.createClient) {
+            _supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+            _supabaseReady = true;
             console.log('Supabase inicializado com sucesso');
+        } else {
+            console.error('Supabase CDN nao carregado');
         }
     } catch (error) {
         console.error('Erro ao inicializar Supabase:', error);
     }
 
-    return supabase;
+    return _supabaseClient;
 }
 
 // Garantir que Supabase esta inicializado antes de usar
 async function ensureSupabase() {
-    if (!supabase || !supabaseReady) {
+    if (!_supabaseClient || !_supabaseReady) {
         await initSupabase();
     }
-    if (!supabase) {
+    if (!_supabaseClient) {
         throw new Error('Supabase nao inicializado');
     }
-    return supabase;
+    return _supabaseClient;
 }
 
 // ============================================
