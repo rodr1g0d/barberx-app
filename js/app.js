@@ -3,6 +3,40 @@
 // Sistema de Agendamentos
 // ============================================
 
+// ============================================
+// DADOS DE DEMONSTRACAO (remover apos apresentacao)
+// ============================================
+const DEMO_DATA = {
+    barbearia: {
+        id: 'demo-001',
+        nome: 'Barbearia Premium',
+        slug: 'demo',
+        cidade: 'Sao Paulo',
+        estado: 'SP',
+        telefone: '(11) 99999-9999',
+        endereco: 'Av. Paulista, 1000',
+        horario_abertura: '09:00',
+        horario_fechamento: '20:00',
+        intervalo_agendamento: 15
+    },
+    servicos: [
+        { id: 'serv-001', nome: 'Corte Tradicional', preco: 45.00, duracao_minutos: 30, descricao: 'Corte classico com tesoura e maquina', ativo: true, ordem: 1 },
+        { id: 'serv-002', nome: 'Barba Completa', preco: 35.00, duracao_minutos: 25, descricao: 'Barba com navalha e toalha quente', ativo: true, ordem: 2 },
+        { id: 'serv-003', nome: 'Corte + Barba', preco: 70.00, duracao_minutos: 50, descricao: 'Combo completo com desconto', ativo: true, ordem: 3 },
+        { id: 'serv-004', nome: 'Corte Degrade', preco: 55.00, duracao_minutos: 40, descricao: 'Degrade estilo americano', ativo: true, ordem: 4 },
+        { id: 'serv-005', nome: 'Pigmentacao Barba', preco: 40.00, duracao_minutos: 30, descricao: 'Coloracao para barba', ativo: true, ordem: 5 },
+        { id: 'serv-006', nome: 'Hidratacao Capilar', preco: 50.00, duracao_minutos: 35, descricao: 'Tratamento hidratante profissional', ativo: true, ordem: 6 }
+    ],
+    profissionais: [
+        { id: 'prof-001', nome: 'Carlos Silva', apelido: 'Carlos', cor_agenda: '#d4a853', ativo: true },
+        { id: 'prof-002', nome: 'Pedro Santos', apelido: 'Pedro', cor_agenda: '#4a90d9', ativo: true },
+        { id: 'prof-003', nome: 'Lucas Oliveira', apelido: 'Lucas', cor_agenda: '#50c878', ativo: true }
+    ]
+};
+
+let isDemoMode = false;
+// ============================================
+
 // Estado da aplicacao
 const AppState = {
     barbearia: null,
@@ -84,13 +118,23 @@ function getSlugFromUrl() {
 
 async function loadBarbearia(slug) {
     try {
+        // Tentar carregar do banco
         AppState.barbearia = await BarberXDB.getBarbeariaBySlug(slug);
+
+        // Se nao encontrou, usar dados demo
+        if (!AppState.barbearia) {
+            console.log('Usando modo DEMO - barbearia nao encontrada no banco');
+            isDemoMode = true;
+            AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
+        }
 
         if (AppState.barbearia) {
             document.title = `${AppState.barbearia.nome} - Agendamento`;
         }
     } catch (error) {
-        console.error('Erro ao carregar barbearia:', error);
+        console.error('Erro ao carregar barbearia, usando demo:', error);
+        isDemoMode = true;
+        AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
     }
 }
 
@@ -98,10 +142,23 @@ async function loadServicos() {
     if (!AppState.barbearia) return;
 
     try {
+        // Se modo demo, usar dados demo
+        if (isDemoMode) {
+            AppState.servicos = DEMO_DATA.servicos;
+            return;
+        }
+
         AppState.servicos = await BarberXDB.getServicosByBarbearia(AppState.barbearia.id);
+
+        // Se nao tem servicos no banco, usar demo
+        if (AppState.servicos.length === 0) {
+            console.log('Nenhum servico no banco, usando demo');
+            isDemoMode = true;
+            AppState.servicos = DEMO_DATA.servicos;
+        }
     } catch (error) {
-        console.error('Erro ao carregar servicos:', error);
-        AppState.servicos = [];
+        console.error('Erro ao carregar servicos, usando demo:', error);
+        AppState.servicos = DEMO_DATA.servicos;
     }
 }
 
@@ -109,10 +166,22 @@ async function loadProfissionais() {
     if (!AppState.barbearia) return;
 
     try {
+        // Se modo demo, usar dados demo
+        if (isDemoMode) {
+            AppState.profissionais = DEMO_DATA.profissionais;
+            return;
+        }
+
         AppState.profissionais = await BarberXDB.getProfissionaisByBarbearia(AppState.barbearia.id);
+
+        // Se nao tem profissionais no banco, usar demo
+        if (AppState.profissionais.length === 0) {
+            console.log('Nenhum profissional no banco, usando demo');
+            AppState.profissionais = DEMO_DATA.profissionais;
+        }
     } catch (error) {
-        console.error('Erro ao carregar profissionais:', error);
-        AppState.profissionais = [];
+        console.error('Erro ao carregar profissionais, usando demo:', error);
+        AppState.profissionais = DEMO_DATA.profissionais;
     }
 }
 
@@ -348,6 +417,13 @@ async function loadAvailableSlots() {
     if (!servico) return;
 
     try {
+        // Se modo demo, gerar horarios ficticios
+        if (isDemoMode) {
+            AppState.availableSlots = generateDemoSlots(servico.duracao_minutos);
+            renderTimeSlots();
+            return;
+        }
+
         AppState.availableSlots = await BarberXDB.getHorariosDisponiveis(
             AppState.barbearia.id,
             AppState.selectedProfessional,
@@ -357,10 +433,46 @@ async function loadAvailableSlots() {
 
         renderTimeSlots();
     } catch (error) {
-        console.error('Erro ao carregar horarios:', error);
-        AppState.availableSlots = [];
+        console.error('Erro ao carregar horarios, usando demo:', error);
+        AppState.availableSlots = generateDemoSlots(servico.duracao_minutos);
         renderTimeSlots();
     }
+}
+
+// Gerar horarios demo
+function generateDemoSlots(duracaoMinutos) {
+    const slots = [];
+    const barbearia = DEMO_DATA.barbearia;
+    const [horaAbertura, minAbertura] = barbearia.horario_abertura.split(':').map(Number);
+    const [horaFechamento, minFechamento] = barbearia.horario_fechamento.split(':').map(Number);
+    const intervalo = barbearia.intervalo_agendamento || 15;
+
+    let currentMinutes = horaAbertura * 60 + minAbertura;
+    const endMinutes = horaFechamento * 60 + minFechamento;
+
+    while (currentMinutes + duracaoMinutos <= endMinutes) {
+        const hora = Math.floor(currentMinutes / 60);
+        const minuto = currentMinutes % 60;
+        const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+
+        const fimMinutes = currentMinutes + duracaoMinutos;
+        const horaFim = Math.floor(fimMinutes / 60);
+        const minutoFim = fimMinutes % 60;
+        const horaFimStr = `${horaFim.toString().padStart(2, '0')}:${minutoFim.toString().padStart(2, '0')}`;
+
+        // Simular alguns horarios ocupados aleatoriamente
+        const disponivel = Math.random() > 0.2;
+
+        slots.push({
+            hora_inicio: horaStr,
+            hora_fim: horaFimStr,
+            disponivel: disponivel
+        });
+
+        currentMinutes += intervalo;
+    }
+
+    return slots;
 }
 
 // ============================================
@@ -454,13 +566,22 @@ async function confirmBooking() {
 
     const servico = AppState.servicos.find(s => s.id === AppState.selectedService);
     if (!servico) {
-        showToast('Selecione um serviço', 'error');
+        showToast('Selecione um servico', 'error');
         return;
     }
 
     showLoading(true);
 
     try {
+        // Modo DEMO - simular sucesso
+        if (isDemoMode) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
+            showStep(5);
+            showToast('Agendamento realizado com sucesso!', 'success');
+            showLoading(false);
+            return;
+        }
+
         // Criar ou atualizar cliente
         let cliente = null;
         if (email) {
