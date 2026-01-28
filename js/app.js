@@ -83,12 +83,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Renderizar interface
         renderHeader();
-        renderServicos();
+        // renderServicos(); // REMOVIDO - ir direto pro calendario
         renderProfissionais();
         generateDatePicker();
 
-        // Mostrar passo 1
-        showStep(1);
+        // Selecionar primeiro servico automaticamente (para demo)
+        AppState.selectedService = DEMO_DATA.servicos[0].id;
+
+        // Mostrar passo 2 (profissional) direto
+        showStep(2);
 
         // Configurar botoes de navegacao
         setupNavigation();
