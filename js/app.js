@@ -117,72 +117,20 @@ function getSlugFromUrl() {
 // ============================================
 
 async function loadBarbearia(slug) {
-    try {
-        // Tentar carregar do banco
-        AppState.barbearia = await BarberXDB.getBarbeariaBySlug(slug);
-
-        // Se nao encontrou, usar dados demo
-        if (!AppState.barbearia) {
-            console.log('Usando modo DEMO - barbearia nao encontrada no banco');
-            isDemoMode = true;
-            AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
-        }
-
-        if (AppState.barbearia) {
-            document.title = `${AppState.barbearia.nome} - Agendamento`;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar barbearia, usando demo:', error);
-        isDemoMode = true;
-        AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
-    }
+    // MODO DEMO - usar dados direto sem banco
+    isDemoMode = true;
+    AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
+    document.title = `${AppState.barbearia.nome} - Agendamento`;
 }
 
 async function loadServicos() {
-    if (!AppState.barbearia) return;
-
-    try {
-        // Se modo demo, usar dados demo
-        if (isDemoMode) {
-            AppState.servicos = DEMO_DATA.servicos;
-            return;
-        }
-
-        AppState.servicos = await BarberXDB.getServicosByBarbearia(AppState.barbearia.id);
-
-        // Se nao tem servicos no banco, usar demo
-        if (AppState.servicos.length === 0) {
-            console.log('Nenhum servico no banco, usando demo');
-            isDemoMode = true;
-            AppState.servicos = DEMO_DATA.servicos;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar servicos, usando demo:', error);
-        AppState.servicos = DEMO_DATA.servicos;
-    }
+    // MODO DEMO - usar dados direto
+    AppState.servicos = DEMO_DATA.servicos;
 }
 
 async function loadProfissionais() {
-    if (!AppState.barbearia) return;
-
-    try {
-        // Se modo demo, usar dados demo
-        if (isDemoMode) {
-            AppState.profissionais = DEMO_DATA.profissionais;
-            return;
-        }
-
-        AppState.profissionais = await BarberXDB.getProfissionaisByBarbearia(AppState.barbearia.id);
-
-        // Se nao tem profissionais no banco, usar demo
-        if (AppState.profissionais.length === 0) {
-            console.log('Nenhum profissional no banco, usando demo');
-            AppState.profissionais = DEMO_DATA.profissionais;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar profissionais, usando demo:', error);
-        AppState.profissionais = DEMO_DATA.profissionais;
-    }
+    // MODO DEMO - usar dados direto
+    AppState.profissionais = DEMO_DATA.profissionais;
 }
 
 // ============================================
