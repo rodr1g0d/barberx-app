@@ -149,7 +149,7 @@ function renderHeader() {
 }
 
 function renderServicos() {
-    const container = document.getElementById('services-list');
+    const container = document.getElementById('servicosGrid');
     if (!container) return;
 
     if (AppState.servicos.length === 0) {
@@ -176,7 +176,7 @@ function renderServicos() {
 }
 
 function renderProfissionais() {
-    const container = document.getElementById('professionals-list');
+    const container = document.getElementById('profissionaisGrid');
     if (!container) return;
 
     if (AppState.profissionais.length === 0) {
