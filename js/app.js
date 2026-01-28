@@ -20,12 +20,10 @@ const DEMO_DATA = {
         intervalo_agendamento: 15
     },
     servicos: [
-        { id: 'serv-001', nome: 'Corte Tradicional', preco: 45.00, duracao_minutos: 30, descricao: 'Corte classico com tesoura e maquina', ativo: true, ordem: 1 },
-        { id: 'serv-002', nome: 'Barba Completa', preco: 35.00, duracao_minutos: 25, descricao: 'Barba com navalha e toalha quente', ativo: true, ordem: 2 },
-        { id: 'serv-003', nome: 'Corte + Barba', preco: 70.00, duracao_minutos: 50, descricao: 'Combo completo com desconto', ativo: true, ordem: 3 },
-        { id: 'serv-004', nome: 'Corte Degrade', preco: 55.00, duracao_minutos: 40, descricao: 'Degrade estilo americano', ativo: true, ordem: 4 },
-        { id: 'serv-005', nome: 'Pigmentacao Barba', preco: 40.00, duracao_minutos: 30, descricao: 'Coloracao para barba', ativo: true, ordem: 5 },
-        { id: 'serv-006', nome: 'Hidratacao Capilar', preco: 50.00, duracao_minutos: 35, descricao: 'Tratamento hidratante profissional', ativo: true, ordem: 6 }
+        { id: 'serv-001', nome: 'Corte Masculino', preco: 45.00, duracao_minutos: 30, descricao: '', ativo: true, ordem: 1 },
+        { id: 'serv-002', nome: 'Barba', preco: 35.00, duracao_minutos: 25, descricao: '', ativo: true, ordem: 2 },
+        { id: 'serv-003', nome: 'Corte + Barba', preco: 70.00, duracao_minutos: 50, descricao: '', ativo: true, ordem: 3 },
+        { id: 'serv-004', nome: 'Sobrancelha', preco: 15.00, duracao_minutos: 15, descricao: '', ativo: true, ordem: 4 }
     ],
     profissionais: [
         { id: 'prof-001', nome: 'Carlos Silva', apelido: 'Carlos', cor_agenda: '#d4a853', ativo: true },
@@ -92,6 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Mostrar passo 1
         showStep(1);
 
+        // Configurar botoes de navegacao
+        setupNavigation();
+
     } catch (error) {
         console.error('Erro ao inicializar app:', error);
         showError('Erro ao carregar', 'Tente novamente mais tarde');
@@ -99,6 +100,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         showLoading(false);
     }
 });
+
+// Configurar navegacao
+function setupNavigation() {
+    const btnAvancar = document.getElementById('btnAvancar');
+    const btnVoltar = document.getElementById('btnVoltar');
+
+    if (btnAvancar) {
+        btnAvancar.addEventListener('click', () => {
+            if (AppState.currentStep === 4) {
+                confirmBooking();
+            } else {
+                nextStep();
+            }
+        });
+    }
+
+    if (btnVoltar) {
+        btnVoltar.addEventListener('click', () => {
+            prevStep();
+        });
+    }
+}
 
 function getSlugFromUrl() {
     const path = window.location.pathname;
