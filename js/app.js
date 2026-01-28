@@ -71,16 +71,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     showLoading(true);
 
     try {
-        // Aguardar Supabase inicializar
-        await BarberXDB.initSupabase();
+        // MODO DEMO - nao precisa inicializar Supabase
+        // await BarberXDB.initSupabase();
 
-        // Carregar dados da barbearia
+        // Carregar dados da barbearia (modo demo)
         await loadBarbearia(slug);
-
-        if (!AppState.barbearia) {
-            showError('Barbearia não encontrada', 'Verifique o endereço e tente novamente');
-            return;
-        }
 
         // Carregar servicos e profissionais
         await Promise.all([
