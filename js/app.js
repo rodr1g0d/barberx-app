@@ -1,232 +1,106 @@
 // ============================================
-// BARBERX - App Cliente
-// Sistema de Agendamentos
+// BARBERX APP - Sistema de Agendamentos
+// Versao: 2.0 - Interface Single Page
 // ============================================
 
-// ============================================
-// DADOS DE DEMONSTRACAO (remover apos apresentacao)
-// ============================================
+// Dados de demonstracao
 const DEMO_DATA = {
     barbearia: {
         id: 'demo-001',
-        nome: 'Barbearia Premium',
-        slug: 'demo',
-        cidade: 'Sao Paulo',
-        estado: 'SP',
+        nome: 'Barbearia Teste',
+        endereco: 'Av. Paulista, 1000 - Sao Paulo',
         telefone: '(11) 99999-9999',
-        endereco: 'Av. Paulista, 1000',
         horario_abertura: '09:00',
-        horario_fechamento: '20:00',
-        intervalo_agendamento: 15
+        horario_fechamento: '20:00'
     },
-    servicos: [
-        { id: 'serv-001', nome: 'Corte Masculino', preco: 45.00, duracao_minutos: 30, descricao: '', ativo: true, ordem: 1 },
-        { id: 'serv-002', nome: 'Barba', preco: 35.00, duracao_minutos: 25, descricao: '', ativo: true, ordem: 2 },
-        { id: 'serv-003', nome: 'Corte + Barba', preco: 70.00, duracao_minutos: 50, descricao: '', ativo: true, ordem: 3 },
-        { id: 'serv-004', nome: 'Sobrancelha', preco: 15.00, duracao_minutos: 15, descricao: '', ativo: true, ordem: 4 }
-    ],
     profissionais: [
-        { id: 'prof-001', nome: 'Carlos Silva', apelido: 'Carlos', cor_agenda: '#d4a853', ativo: true },
-        { id: 'prof-002', nome: 'Pedro Santos', apelido: 'Pedro', cor_agenda: '#4a90d9', ativo: true },
-        { id: 'prof-003', nome: 'Lucas Oliveira', apelido: 'Lucas', cor_agenda: '#50c878', ativo: true }
+        { id: 'prof-001', nome: 'Carlos', foto: null },
+        { id: 'prof-002', nome: 'Pedro', foto: null },
+        { id: 'prof-003', nome: 'Lucas', foto: null },
+        { id: 'prof-004', nome: 'Rafael', foto: null }
+    ],
+    servicos: [
+        { id: 'serv-001', nome: 'Corte Masculino', preco: 45.00, duracao: 30, icone: 'scissors' },
+        { id: 'serv-002', nome: 'Barba Completa', preco: 35.00, duracao: 25, icone: 'smile' },
+        { id: 'serv-003', nome: 'Corte + Barba', preco: 70.00, duracao: 50, icone: 'star' },
+        { id: 'serv-004', nome: 'Sobrancelha', preco: 15.00, duracao: 15, icone: 'eye' },
+        { id: 'serv-005', nome: 'Pigmentacao', preco: 80.00, duracao: 45, icone: 'palette' }
     ]
 };
 
-let isDemoMode = false;
-// ============================================
-
 // Estado da aplicacao
-const AppState = {
-    barbearia: null,
-    servicos: [],
-    profissionais: [],
-    currentStep: 1,
-    selectedService: null,
-    selectedProfessional: null,
+const state = {
     selectedDate: null,
-    selectedTime: null,
-    availableSlots: [],
-    cliente: {
-        nome: '',
-        email: '',
-        telefone: ''
-    }
+    selectedProfissional: null,
+    selectedHorario: null,
+    selectedServico: null
 };
 
 // ============================================
 // INICIALIZACAO
 // ============================================
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Obter slug da URL
-    const slug = getSlugFromUrl();
-
-    if (!slug) {
-        showError('Barbearia não encontrada', 'URL inválida');
-        return;
-    }
-
-    showLoading(true);
-
-    try {
-        // MODO DEMO - nao precisa inicializar Supabase
-        // await BarberXDB.initSupabase();
-
-        // Carregar dados da barbearia (modo demo)
-        await loadBarbearia(slug);
-
-        // Carregar servicos e profissionais
-        await Promise.all([
-            loadServicos(),
-            loadProfissionais()
-        ]);
-
-        // Renderizar interface
-        renderHeader();
-        // renderServicos(); // REMOVIDO - ir direto pro calendario
-        renderProfissionais();
-        generateDatePicker();
-
-        // Selecionar primeiro servico automaticamente (para demo)
-        AppState.selectedService = DEMO_DATA.servicos[0].id;
-
-        // Mostrar passo 2 (profissional) direto
-        showStep(2);
-
-        // Configurar botoes de navegacao
-        setupNavigation();
-
-    } catch (error) {
-        console.error('Erro ao inicializar app:', error);
-        showError('Erro ao carregar', 'Tente novamente mais tarde');
-    } finally {
-        showLoading(false);
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    init();
 });
 
-// Configurar navegacao
-function setupNavigation() {
-    const btnAvancar = document.getElementById('btnAvancar');
-    const btnVoltar = document.getElementById('btnVoltar');
+function init() {
+    renderBarbearia();
+    renderDatePicker();
+    renderProfissionais();
+    setupEventListeners();
 
-    if (btnAvancar) {
-        btnAvancar.addEventListener('click', () => {
-            if (AppState.currentStep === 4) {
-                confirmBooking();
-            } else {
-                nextStep();
-            }
-        });
-    }
-
-    if (btnVoltar) {
-        btnVoltar.addEventListener('click', () => {
-            prevStep();
-        });
-    }
+    // Selecionar primeira data por padrao
+    const today = new Date();
+    selectDate(formatDate(today));
 }
 
-function getSlugFromUrl() {
-    const path = window.location.pathname;
-    // Remove leading slash and get first segment
-    const segments = path.split('/').filter(s => s);
-    return segments[0] || null;
-}
+function setupEventListeners() {
+    // Botao rota
+    document.getElementById('btnRota')?.addEventListener('click', () => {
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(DEMO_DATA.barbearia.endereco)}`, '_blank');
+    });
 
-// ============================================
-// CARREGAMENTO DE DADOS
-// ============================================
+    // Botao ligar
+    document.getElementById('btnLigar')?.addEventListener('click', () => {
+        window.location.href = `tel:${DEMO_DATA.barbearia.telefone.replace(/\D/g, '')}`;
+    });
 
-async function loadBarbearia(slug) {
-    // MODO DEMO - usar dados direto sem banco
-    isDemoMode = true;
-    AppState.barbearia = { ...DEMO_DATA.barbearia, slug: slug };
-    document.title = `${AppState.barbearia.nome} - Agendamento`;
-}
+    // Modal close
+    document.getElementById('modalClose')?.addEventListener('click', closeModal);
 
-async function loadServicos() {
-    // MODO DEMO - usar dados direto
-    AppState.servicos = DEMO_DATA.servicos;
-}
+    // Confirmar agendamento
+    document.getElementById('btnConfirmar')?.addEventListener('click', confirmarAgendamento);
 
-async function loadProfissionais() {
-    // MODO DEMO - usar dados direto
-    AppState.profissionais = DEMO_DATA.profissionais;
+    // Novo agendamento
+    document.getElementById('btnNovo')?.addEventListener('click', novoAgendamento);
+
+    // Fechar modal clicando fora
+    document.getElementById('modalConfirmacao')?.addEventListener('click', (e) => {
+        if (e.target.id === 'modalConfirmacao') closeModal();
+    });
 }
 
 // ============================================
 // RENDERIZACAO
 // ============================================
 
-function renderHeader() {
-    const barbearia = AppState.barbearia;
-    if (!barbearia) return;
+function renderBarbearia() {
+    const b = DEMO_DATA.barbearia;
 
-    const headerInfo = document.querySelector('.barbearia-info');
-    if (headerInfo) {
-        headerInfo.innerHTML = `
-            <div class="barbearia-logo-placeholder">${barbearia.nome.charAt(0)}</div>
-            <div class="barbearia-details">
-                <h1>${barbearia.nome}</h1>
-                <p>${barbearia.cidade} - ${barbearia.estado}</p>
-            </div>
-        `;
-    }
+    document.getElementById('barbeariaNome').textContent = b.nome;
+    document.getElementById('barbeariaEndereco').textContent = b.endereco;
+    document.getElementById('barbeariaAvatar').textContent = b.nome.split(' ').map(w => w[0]).join('').substring(0, 2);
 }
 
-function renderServicos() {
-    const container = document.getElementById('servicosGrid');
-    if (!container) return;
-
-    if (AppState.servicos.length === 0) {
-        container.innerHTML = `
-            <div class="no-slots">
-                <p>Nenhum serviço disponível</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = AppState.servicos.map(servico => `
-        <div class="service-card" data-id="${servico.id}" onclick="selectService('${servico.id}')">
-            <div class="service-header">
-                <span class="service-name">${servico.nome}</span>
-                <span class="service-price">R$ ${parseFloat(servico.preco).toFixed(2)}</span>
-            </div>
-        </div>
-    `).join('');
-}
-
-function renderProfissionais() {
-    const container = document.getElementById('profissionaisGrid');
-    if (!container) return;
-
-    if (AppState.profissionais.length === 0) {
-        container.innerHTML = `
-            <div class="no-slots">
-                <p>Nenhum profissional disponível</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = AppState.profissionais.map(prof => `
-        <div class="professional-card" data-id="${prof.id}" onclick="selectProfessional('${prof.id}')">
-            <div class="professional-avatar-placeholder" style="background: ${prof.cor_agenda || '#d4a853'}">
-                ${(prof.apelido || prof.nome).charAt(0)}
-            </div>
-            <div class="professional-name">${prof.apelido || prof.nome}</div>
-            <div class="professional-specialty">Barbeiro</div>
-        </div>
-    `).join('');
-}
-
-function generateDatePicker() {
-    const container = document.getElementById('date-picker');
+function renderDatePicker() {
+    const container = document.getElementById('datePicker');
     if (!container) return;
 
     const dates = [];
     const today = new Date();
+    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
     // Gerar proximos 14 dias
     for (let i = 0; i < 14; i++) {
@@ -235,462 +109,329 @@ function generateDatePicker() {
         dates.push(date);
     }
 
-    const weekDays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
-
     container.innerHTML = dates.map((date, index) => {
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = formatDate(date);
         return `
             <div class="date-item ${index === 0 ? 'selected' : ''}"
                  data-date="${dateStr}"
                  onclick="selectDate('${dateStr}')">
-                <div class="date-day">${date.getDate()}</div>
                 <div class="date-weekday">${weekDays[date.getDay()]}</div>
+                <div class="date-day">${date.getDate()}</div>
+                <div class="date-month">${months[date.getMonth()]}</div>
             </div>
         `;
     }).join('');
-
-    // Selecionar hoje por padrao
-    AppState.selectedDate = today.toISOString().split('T')[0];
 }
 
-function renderTimeSlots() {
-    const container = document.getElementById('time-slots');
+function renderProfissionais() {
+    const container = document.getElementById('profissionaisList');
     if (!container) return;
 
-    if (AppState.availableSlots.length === 0) {
-        container.innerHTML = `
-            <div class="no-slots">
-                <p>Nenhum horário disponível para esta data</p>
+    container.innerHTML = DEMO_DATA.profissionais.map(prof => `
+        <div class="profissional-item" data-id="${prof.id}" onclick="selectProfissional('${prof.id}')">
+            <div class="profissional-avatar">
+                ${prof.foto
+                    ? `<img src="${prof.foto}" alt="${prof.nome}">`
+                    : prof.nome.charAt(0)}
             </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = AppState.availableSlots.map(slot => `
-        <div class="time-slot ${slot.disponivel ? '' : 'disabled'}"
-             data-time="${slot.hora_inicio}"
-             onclick="${slot.disponivel ? `selectTime('${slot.hora_inicio}', '${slot.hora_fim}')` : ''}">
-            ${slot.hora_inicio}
+            <div class="profissional-nome">${prof.nome}</div>
         </div>
     `).join('');
 }
 
-function renderSummary() {
-    const container = document.getElementById('booking-summary');
-    if (!container) return;
+function renderHorarios() {
+    const section = document.getElementById('horariosSection');
+    const manhaCont = document.getElementById('horariosManha');
+    const tardeCont = document.getElementById('horariosTarde');
+    const noiteCont = document.getElementById('horariosNoite');
 
-    const servico = AppState.servicos.find(s => s.id === AppState.selectedService);
-    const profissional = AppState.profissionais.find(p => p.id === AppState.selectedProfessional);
+    if (!state.selectedProfissional || !state.selectedDate) {
+        section.style.display = 'none';
+        return;
+    }
 
-    if (!servico || !profissional) return;
+    section.style.display = 'block';
 
-    const dateObj = new Date(AppState.selectedDate + 'T12:00:00');
-    const dateFormatted = dateObj.toLocaleDateString('pt-BR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long'
+    // Gerar horarios
+    const horarios = generateHorarios();
+
+    // Separar por periodo
+    const manha = horarios.filter(h => {
+        const hora = parseInt(h.hora.split(':')[0]);
+        return hora >= 9 && hora < 12;
     });
 
-    container.innerHTML = `
-        <div class="summary-item">
-            <span class="summary-label">Serviço</span>
-            <span class="summary-value">${servico.nome}</span>
+    const tarde = horarios.filter(h => {
+        const hora = parseInt(h.hora.split(':')[0]);
+        return hora >= 12 && hora < 18;
+    });
+
+    const noite = horarios.filter(h => {
+        const hora = parseInt(h.hora.split(':')[0]);
+        return hora >= 18;
+    });
+
+    manhaCont.innerHTML = renderHorariosGrid(manha);
+    tardeCont.innerHTML = renderHorariosGrid(tarde);
+    noiteCont.innerHTML = renderHorariosGrid(noite);
+
+    // Recriar icones
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function renderHorariosGrid(horarios) {
+    if (horarios.length === 0) {
+        return '<p style="color: var(--gray); font-size: 0.875rem; grid-column: 1/-1;">Sem horarios</p>';
+    }
+
+    return horarios.map(h => `
+        <div class="horario-item ${h.disponivel ? '' : 'disabled'} ${state.selectedHorario === h.hora ? 'selected' : ''}"
+             data-hora="${h.hora}"
+             onclick="${h.disponivel ? `selectHorario('${h.hora}')` : ''}">
+            ${h.hora}
         </div>
-        <div class="summary-item">
-            <span class="summary-label">Profissional</span>
-            <span class="summary-value">${profissional.apelido || profissional.nome}</span>
+    `).join('');
+}
+
+function renderServicos() {
+    const section = document.getElementById('servicosSection');
+    const container = document.getElementById('servicosList');
+    const paymentSection = document.getElementById('paymentSection');
+
+    if (!state.selectedHorario) {
+        section.style.display = 'none';
+        paymentSection.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    paymentSection.style.display = 'block';
+
+    container.innerHTML = DEMO_DATA.servicos.map(serv => `
+        <div class="servico-item">
+            <div class="servico-info">
+                <div class="servico-icon">
+                    <i data-lucide="${serv.icone}"></i>
+                </div>
+                <div class="servico-details">
+                    <h3>${serv.nome}</h3>
+                    <div class="servico-meta">
+                        <span class="servico-preco">R$ ${serv.preco.toFixed(2)}</span>
+                        <span>${serv.duracao} min</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-agendar" onclick="agendar('${serv.id}')">
+                Agendar
+            </button>
         </div>
-        <div class="summary-item">
-            <span class="summary-label">Data</span>
-            <span class="summary-value">${dateFormatted}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Horário</span>
-            <span class="summary-value">${AppState.selectedTime}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Duração</span>
-            <span class="summary-value">${servico.duracao_minutos} minutos</span>
-        </div>
-        <div class="summary-total">
-            <span class="summary-label">Total</span>
-            <span class="summary-value">R$ ${parseFloat(servico.preco).toFixed(2)}</span>
-        </div>
-    `;
+    `).join('');
+
+    // Recriar icones
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 // ============================================
-// SELECOES
+// SELECAO
 // ============================================
 
-function selectService(serviceId) {
-    AppState.selectedService = serviceId;
-
-    // Atualizar UI
-    document.querySelectorAll('.service-card').forEach(card => {
-        card.classList.toggle('selected', card.dataset.id === serviceId);
-    });
-
-    // Habilitar botao de proximo
-    updateNavigationButtons();
-}
-
-function selectProfessional(professionalId) {
-    AppState.selectedProfessional = professionalId;
-
-    // Atualizar UI
-    document.querySelectorAll('.professional-card').forEach(card => {
-        card.classList.toggle('selected', card.dataset.id === professionalId);
-    });
-
-    // Habilitar botao de proximo
-    updateNavigationButtons();
-}
-
-async function selectDate(dateStr) {
-    AppState.selectedDate = dateStr;
-    AppState.selectedTime = null;
+function selectDate(dateStr) {
+    state.selectedDate = dateStr;
+    state.selectedHorario = null;
 
     // Atualizar UI
     document.querySelectorAll('.date-item').forEach(item => {
         item.classList.toggle('selected', item.dataset.date === dateStr);
     });
 
-    // Carregar horarios disponiveis
-    await loadAvailableSlots();
+    renderHorarios();
+    renderServicos();
 }
 
-function selectTime(startTime, endTime) {
-    AppState.selectedTime = startTime;
-    AppState.selectedTimeEnd = endTime;
+function selectProfissional(profId) {
+    state.selectedProfissional = profId;
+    state.selectedHorario = null;
 
     // Atualizar UI
-    document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.toggle('selected', slot.dataset.time === startTime);
+    document.querySelectorAll('.profissional-item').forEach(item => {
+        item.classList.toggle('selected', item.dataset.id === profId);
     });
 
-    // Habilitar botao de proximo
-    updateNavigationButtons();
+    renderHorarios();
+    renderServicos();
 }
 
-async function loadAvailableSlots() {
-    if (!AppState.barbearia || !AppState.selectedProfessional || !AppState.selectedService) {
+function selectHorario(hora) {
+    state.selectedHorario = hora;
+
+    // Atualizar UI
+    document.querySelectorAll('.horario-item').forEach(item => {
+        item.classList.toggle('selected', item.dataset.hora === hora);
+    });
+
+    renderServicos();
+
+    // Scroll para servicos
+    document.getElementById('servicosSection')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================
+// AGENDAMENTO
+// ============================================
+
+function agendar(servicoId) {
+    state.selectedServico = servicoId;
+
+    const servico = DEMO_DATA.servicos.find(s => s.id === servicoId);
+    const profissional = DEMO_DATA.profissionais.find(p => p.id === state.selectedProfissional);
+
+    if (!servico || !profissional) return;
+
+    // Formatar data
+    const dateObj = new Date(state.selectedDate + 'T12:00:00');
+    const dateFormatted = dateObj.toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+    });
+
+    // Preencher modal
+    document.getElementById('resumoServico').textContent = servico.nome;
+    document.getElementById('resumoProfissional').textContent = profissional.nome;
+    document.getElementById('resumoData').textContent = dateFormatted;
+    document.getElementById('resumoHorario').textContent = state.selectedHorario;
+    document.getElementById('resumoPreco').textContent = `R$ ${servico.preco.toFixed(2)}`;
+
+    // Abrir modal
+    document.getElementById('modalConfirmacao').classList.add('active');
+
+    // Recriar icones
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function confirmarAgendamento() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    const whatsapp = document.getElementById('clienteWhatsapp').value.trim();
+
+    if (!nome) {
+        alert('Digite seu nome');
         return;
     }
 
-    const servico = AppState.servicos.find(s => s.id === AppState.selectedService);
-    if (!servico) return;
-
-    try {
-        // Se modo demo, gerar horarios ficticios
-        if (isDemoMode) {
-            AppState.availableSlots = generateDemoSlots(servico.duracao_minutos);
-            renderTimeSlots();
-            return;
-        }
-
-        AppState.availableSlots = await BarberXDB.getHorariosDisponiveis(
-            AppState.barbearia.id,
-            AppState.selectedProfessional,
-            AppState.selectedDate,
-            servico.duracao_minutos
-        );
-
-        renderTimeSlots();
-    } catch (error) {
-        console.error('Erro ao carregar horarios, usando demo:', error);
-        AppState.availableSlots = generateDemoSlots(servico.duracao_minutos);
-        renderTimeSlots();
-    }
-}
-
-// Gerar horarios demo
-function generateDemoSlots(duracaoMinutos) {
-    const slots = [];
-    const barbearia = DEMO_DATA.barbearia;
-    const [horaAbertura, minAbertura] = barbearia.horario_abertura.split(':').map(Number);
-    const [horaFechamento, minFechamento] = barbearia.horario_fechamento.split(':').map(Number);
-    const intervalo = barbearia.intervalo_agendamento || 15;
-
-    let currentMinutes = horaAbertura * 60 + minAbertura;
-    const endMinutes = horaFechamento * 60 + minFechamento;
-
-    while (currentMinutes + duracaoMinutos <= endMinutes) {
-        const hora = Math.floor(currentMinutes / 60);
-        const minuto = currentMinutes % 60;
-        const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
-
-        const fimMinutes = currentMinutes + duracaoMinutos;
-        const horaFim = Math.floor(fimMinutes / 60);
-        const minutoFim = fimMinutes % 60;
-        const horaFimStr = `${horaFim.toString().padStart(2, '0')}:${minutoFim.toString().padStart(2, '0')}`;
-
-        // Simular alguns horarios ocupados aleatoriamente
-        const disponivel = Math.random() > 0.2;
-
-        slots.push({
-            hora_inicio: horaStr,
-            hora_fim: horaFimStr,
-            disponivel: disponivel
-        });
-
-        currentMinutes += intervalo;
-    }
-
-    return slots;
-}
-
-// ============================================
-// NAVEGACAO ENTRE PASSOS
-// ============================================
-
-function showStep(step) {
-    AppState.currentStep = step;
-
-    // Esconder todas as secoes
-    document.querySelectorAll('.booking-section').forEach(section => {
-        section.classList.remove('active');
-    });
-
-    // Mostrar secao atual
-    const currentSection = document.getElementById(`step-${step}`);
-    if (currentSection) {
-        currentSection.classList.add('active');
-    }
-
-    // Atualizar indicadores de passo
-    document.querySelectorAll('.step').forEach((stepEl, index) => {
-        stepEl.classList.remove('active', 'completed');
-        if (index + 1 < step) {
-            stepEl.classList.add('completed');
-        } else if (index + 1 === step) {
-            stepEl.classList.add('active');
-        }
-    });
-
-    // Acoes especificas por passo
-    if (step === 3) {
-        loadAvailableSlots();
-    } else if (step === 4) {
-        renderSummary();
-    }
-
-    updateNavigationButtons();
-}
-
-function nextStep() {
-    if (AppState.currentStep < 5) {
-        showStep(AppState.currentStep + 1);
-    }
-}
-
-function prevStep() {
-    if (AppState.currentStep > 1) {
-        showStep(AppState.currentStep - 1);
-    }
-}
-
-function updateNavigationButtons() {
-    const step = AppState.currentStep;
-
-    // Botao proximo do passo 1 (servico)
-    const btnStep1 = document.getElementById('btn-next-1');
-    if (btnStep1) {
-        btnStep1.disabled = !AppState.selectedService;
-    }
-
-    // Botao proximo do passo 2 (profissional)
-    const btnStep2 = document.getElementById('btn-next-2');
-    if (btnStep2) {
-        btnStep2.disabled = !AppState.selectedProfessional;
-    }
-
-    // Botao proximo do passo 3 (data/hora)
-    const btnStep3 = document.getElementById('btn-next-3');
-    if (btnStep3) {
-        btnStep3.disabled = !AppState.selectedTime;
-    }
-}
-
-// ============================================
-// CONFIRMACAO DO AGENDAMENTO
-// ============================================
-
-async function confirmBooking() {
-    // Validar dados do cliente
-    const nome = document.getElementById('client-name')?.value.trim();
-    const email = document.getElementById('client-email')?.value.trim();
-    const telefone = document.getElementById('client-phone')?.value.trim();
-
-    if (!nome || !telefone) {
-        showToast('Preencha seu nome e telefone', 'error');
+    if (!whatsapp) {
+        alert('Digite seu WhatsApp');
         return;
     }
 
-    AppState.cliente = { nome, email, telefone };
-
-    const servico = AppState.servicos.find(s => s.id === AppState.selectedService);
-    if (!servico) {
-        showToast('Selecione um servico', 'error');
-        return;
-    }
-
+    // Simular envio
     showLoading(true);
 
-    try {
-        // Modo DEMO - simular sucesso
-        if (isDemoMode) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay
-            showStep(5);
-            showToast('Agendamento realizado com sucesso!', 'success');
-            showLoading(false);
-            return;
-        }
-
-        // Criar ou atualizar cliente
-        let cliente = null;
-        if (email) {
-            cliente = await BarberXDB.createOrUpdateCliente({
-                nome: AppState.cliente.nome,
-                email: AppState.cliente.email,
-                telefone: AppState.cliente.telefone
-            });
-        }
-
-        // Criar agendamento
-        const agendamento = {
-            barbearia_id: AppState.barbearia.id,
-            profissional_id: AppState.selectedProfessional,
-            servico_id: AppState.selectedService,
-            cliente_id: cliente?.id || null,
-            cliente_nome: AppState.cliente.nome,
-            cliente_telefone: AppState.cliente.telefone,
-            cliente_email: AppState.cliente.email || null,
-            data: AppState.selectedDate,
-            hora_inicio: AppState.selectedTime,
-            hora_fim: AppState.selectedTimeEnd,
-            preco: servico.preco,
-            status: 'pendente'
-        };
-
-        await BarberXDB.createAgendamento(agendamento);
-
-        // Mostrar tela de sucesso
-        showStep(5);
-        showToast('Agendamento realizado com sucesso!', 'success');
-
-    } catch (error) {
-        console.error('Erro ao confirmar agendamento:', error);
-        showToast('Erro ao agendar. Tente novamente.', 'error');
-    } finally {
+    setTimeout(() => {
         showLoading(false);
-    }
+        closeModal();
+
+        // Dados para modal de sucesso
+        const dateObj = new Date(state.selectedDate + 'T12:00:00');
+        const dateFormatted = dateObj.toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long'
+        });
+        const profissional = DEMO_DATA.profissionais.find(p => p.id === state.selectedProfissional);
+
+        document.getElementById('sucessoData').textContent = dateFormatted;
+        document.getElementById('sucessoHorario').textContent = state.selectedHorario;
+        document.getElementById('sucessoProfissional').textContent = profissional?.nome || '-';
+
+        // Abrir modal de sucesso
+        document.getElementById('modalSucesso').classList.add('active');
+
+        // Recriar icones
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }, 1500);
 }
 
-function newBooking() {
-    // Resetar estado
-    AppState.selectedService = null;
-    AppState.selectedProfessional = null;
-    AppState.selectedTime = null;
-    AppState.cliente = { nome: '', email: '', telefone: '' };
+function novoAgendamento() {
+    document.getElementById('modalSucesso').classList.remove('active');
 
-    // Limpar selecoes
-    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    // Limpar estado
+    state.selectedHorario = null;
+    state.selectedServico = null;
 
     // Limpar formulario
-    const nameInput = document.getElementById('client-name');
-    const emailInput = document.getElementById('client-email');
-    const phoneInput = document.getElementById('client-phone');
-    if (nameInput) nameInput.value = '';
-    if (emailInput) emailInput.value = '';
-    if (phoneInput) phoneInput.value = '';
+    document.getElementById('clienteNome').value = '';
+    document.getElementById('clienteWhatsapp').value = '';
 
-    // Voltar ao passo 1
-    generateDatePicker();
-    showStep(1);
+    // Re-renderizar
+    renderHorarios();
+    renderServicos();
+
+    // Scroll para topo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeModal() {
+    document.getElementById('modalConfirmacao').classList.remove('active');
 }
 
 // ============================================
-// UI HELPERS
+// HELPERS
 // ============================================
+
+function generateHorarios() {
+    const horarios = [];
+    const horaInicio = 9;
+    const horaFim = 20;
+    const intervalo = 30;
+
+    for (let h = horaInicio; h < horaFim; h++) {
+        for (let m = 0; m < 60; m += intervalo) {
+            const hora = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+            // Simular disponibilidade aleatoria (80% disponivel)
+            const disponivel = Math.random() > 0.2;
+            horarios.push({ hora, disponivel });
+        }
+    }
+
+    return horarios;
+}
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 function showLoading(show) {
-    const loading = document.getElementById('loading');
-    const mainContent = document.getElementById('main-content');
-
-    if (loading) {
-        loading.classList.toggle('hidden', !show);
-    }
-    if (mainContent) {
-        mainContent.classList.toggle('hidden', show);
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.classList.toggle('active', show);
     }
 }
 
-function showError(title, message) {
-    const mainContent = document.getElementById('main-content');
-    const loading = document.getElementById('loading');
+// Formatar telefone
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'clienteWhatsapp') {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.substring(0, 11);
 
-    if (loading) loading.classList.add('hidden');
+        if (value.length > 7) {
+            value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+        } else if (value.length > 2) {
+            value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+        } else if (value.length > 0) {
+            value = value.replace(/^(\d{0,2})/, '($1');
+        }
 
-    if (mainContent) {
-        mainContent.innerHTML = `
-            <div class="error-state">
-                <div class="error-icon">😕</div>
-                <h3>${title}</h3>
-                <p>${message}</p>
-                <a href="https://barber.xrtec1.com" class="btn btn-primary" style="margin-top: 24px; display: inline-flex;">
-                    Voltar ao início
-                </a>
-            </div>
-        `;
-        mainContent.classList.remove('hidden');
+        e.target.value = value;
     }
-}
-
-function showToast(message, type = 'success') {
-    // Remover toast existente
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <span>${type === 'success' ? '✓' : '✕'}</span>
-        <span>${message}</span>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Animar entrada
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remover apos 3 segundos
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// ============================================
-// FORMATACAO
-// ============================================
-
-function formatPhone(input) {
-    let value = input.value.replace(/\D/g, '');
-
-    if (value.length > 11) {
-        value = value.substring(0, 11);
-    }
-
-    if (value.length > 7) {
-        value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
-    } else if (value.length > 2) {
-        value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-    } else if (value.length > 0) {
-        value = value.replace(/^(\d{0,2})/, '($1');
-    }
-
-    input.value = value;
-}
+});
