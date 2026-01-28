@@ -190,10 +190,6 @@ function renderServicos() {
                 <span class="service-name">${servico.nome}</span>
                 <span class="service-price">R$ ${parseFloat(servico.preco).toFixed(2)}</span>
             </div>
-            <div class="service-details">
-                <span>⏱️ ${servico.duracao_minutos} min</span>
-                ${servico.descricao ? `<span>${servico.descricao}</span>` : ''}
-            </div>
         </div>
     `).join('');
 }
